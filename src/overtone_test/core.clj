@@ -6,11 +6,9 @@
 
 (demo 7
       (lpf
-			 (mix
-        (saw [50 (line 100 1600 5) 101 100.5]))
-       (lin-lin
-        (lf-tri (line 2 20 5))
-        -1 1 400 4000)))
+        (mix
+          (saw [50 (line 100 1600 5) 101 100.5]))
+        (lin-lin (lf-tri (line 2 20 5)) -1 1 400 4000)))
 
 (definst saw-wave [freq 440 attack 0.01 sustain 0.4 release 0.1 vol 0.4] 
   (* (env-gen (env-lin attack sustain release) 1 1 0 1 FREE)
@@ -31,23 +29,19 @@
      (sin-osc (+ freq (* 20 (lf-pulse:kr 0.5 0 width))))
      vol))
 
-(demo 10 (lpf (saw 100) (mouse-x 40 5000 EXP)))
-
-; Mouse x and y control the pitch and cutoff frequency
+; Mouse x and y control the pitch and cutoff frequency respectively.
 (demo 10
       (lpf (saw (mouse-y 5000 100 LIN))
            (mouse-x 40 5000 EXP)))
 
 
-
-
 ; Play a chord progression in a loop
 
 (defn saw2 [music-note]
-      (saw-wave (midi->hz (note music-note))))
+  (saw-wave (midi->hz (note music-note))))
 
 (defn play-chord [a-chord]
-    (doseq [note a-chord] (saw2 note)))
+  (doseq [note a-chord] (saw2 note)))
 
 (defonce metro (metronome 120))
 (defn chord-progression-beat [m beat-num]
@@ -60,5 +54,6 @@
     chord-progression-beat m (+ 16 beat-num) []))
 
 (chord-progression-beat metro (metro))
+(stop)
 
 ; The End
