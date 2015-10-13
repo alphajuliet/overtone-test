@@ -11,7 +11,7 @@
 (def bd808 (my-sample "drums/tr808/BD/BD0050.wav"))
 (def sd808 (my-sample "drums/tr808/SD/SD0050.wav"))
 (def ch808 (my-sample "drums/tr808/CH/CH.wav"))
-(def oh808 (my-sample "drums/tr808/OH/OH.wav"))
+(def oh808 (my-sample "drums/tr808/OH/OH50.wav"))
 
 ; setup a tempo for our metronome to use
 (def bpm (metronome 120))
@@ -27,4 +27,30 @@
 (looper bpm bd808)
 
 ; Stop it
+(stop)
+
+;; Something a little more sophisticated
+(defn play-pattern [curr-t sep-t sound pattern]
+  "Play a sound according to a binary pattern at a regular interval."
+  (at curr-t (when (= 1 (first pattern)) (sound)))
+  (let [new-t (+ curr-t sep-t)]
+    (apply-by new-t #'play-pattern [new-t sep-t sound (rest pattern)])))
+
+(def inc-t 250) ; ms
+(def p1 [1 0 1 0 1 0 1 0])
+(play-pattern (now) inc-t bd808 (cycle p1))
+(stop)
+
+;; And several at once, in sync
+(def patterns {bd808 [1 0 1 0 1 0 1 0]
+               sd808 [0 0 1 0 0 0 1 0]
+               ch808 [0 1 0 1 0 1 0 0]
+               oh808 [0 0 0 0 0 0 0 1]})
+
+(defn play-patterns [sep-t patterns]
+  (let [t (+ (now) sep-t)]
+    (doseq [[sound pattern] patterns]
+      (play-pattern t sep-t sound (cycle pattern)))))
+
+(play-patterns inc-t patterns)
 (stop)
