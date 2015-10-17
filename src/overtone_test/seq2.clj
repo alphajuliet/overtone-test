@@ -28,7 +28,7 @@
 (def tick 250) ; ms
 
 (defn live-sequencer
-  ([curr-t sep-t live-patterns] 
+  ([curr-t sep-t live-patterns]
    (live-sequencer curr-t sep-t live-patterns 0))
   ([curr-t sep-t live-patterns beat]
    (doseq [[sound pattern] @live-patterns
